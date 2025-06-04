@@ -14,6 +14,7 @@ module.exports = {
   },
   output: {
     publicPath: '/booking-portal-demo/',
+    clean: true,
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],

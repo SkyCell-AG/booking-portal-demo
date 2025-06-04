@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/SkyCell-AG/booking-portal-demo/issues"
   },
-  "homepage": "https://SkyCell-AG.github.io/booking-portal-demo/",
+  "homepage": "https://skycell-ag.github.io/booking-portal-demo/",
   "dependencies": {
     "react": "^19.1.0",
     "react-dom": "^19.1.0"

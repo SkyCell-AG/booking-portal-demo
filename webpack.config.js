@@ -13,7 +13,7 @@ module.exports = {
     },
   },
   output: {
-    publicPath: '/booking-portal-demo/',
+    publicPath: 'https://skycell-ag.github.io/booking-portal-demo/',
     clean: true,
   },
   resolve: {

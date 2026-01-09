@@ -1,0 +1,40 @@
+# yamllint disable rule:line-length
+---
+name: Gitleaks scan
+on:  # yamllint disable-line rule:truthy
+  push:
+  workflow_dispatch:
+
+jobs:
+  # Pipeline job to scan repository for potentially leaked secrets
+  gitleaks_scan:
+    runs-on: ${{ vars.RUNNER_LABEL || 'ubuntu-latest' }}
+    permissions:
+      contents: read  # required by the checkout action below to fetch everything 
+      checks: write   # required to publish annotations from gitleaks report
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # fetch all history for all branches and tags
+      - name: Download Gitleaks
+        env:
+          GITLEAKS_VERSION: 8.30.0  # note: change this variable to install a different gitleaks version
+        run: |
+          wget --progress=dot:mega -O /tmp/gitleaks.tar.gz https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz
+      - name: Install Gitleaks and set the executable flag
+        run: |
+          mkdir -p $HOME/bin
+          tar -xzf /tmp/gitleaks.tar.gz -C $HOME/bin
+          chmod +x $HOME/bin/gitleaks
+      - name: Run Gitleaks scan and generate report
+        run: $HOME/bin/gitleaks dir --verbose --report-format=junit --report-path=report.xml
+      - name: Publish gitleaks scan report
+        uses: mikepenz/action-junit-report@3585e9575db828022551b4231f165eb59a0e74e3  # v5.6.2
+        if: failure()  # publish gitleaks scan report only upon leak detection
+        with:
+          report_paths: report.xml
+          check_name: Gitleaks secret scan report
+          job_summary: true
+          fail_on_parse_error: true
+          require_passed_tests: false  # do not fail if no passed tests found

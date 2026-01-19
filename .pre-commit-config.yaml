@@ -1,0 +1,11 @@
+repos:
+- repo: https://github.com/gitleaks/gitleaks
+  rev: v8.30.0
+  hooks:
+  - id: gitleaks
+    name: gitleaks secret scan
+    entry: gitleaks detect --verbose --source . --no-git --redact
+    language: system
+    pass_filenames: false
+    fail_fast: true
+    exclude: .gitleaksignore
